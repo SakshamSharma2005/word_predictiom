@@ -1,0 +1,10 @@
+tenserflow==2.15.0
+pandas
+numpy
+sckit-learn
+tenserboard
+matplotlib
+seaborn
+streamlit
+scikeras
+nltk
