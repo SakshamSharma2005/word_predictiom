@@ -1,10 +1,9 @@
-tensorflow==2.15.0
-pandas
+streamlit
+tensorflow-cpu==2.14.0
 numpy
+pandas
 scikit-learn
-tensorboard
 matplotlib
 seaborn
-streamlit
 scikeras
 nltk
