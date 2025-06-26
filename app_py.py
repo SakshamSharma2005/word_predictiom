@@ -3,25 +3,31 @@
 
 import streamlit as st
 import numpy as np
+import re
+import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
-import pickle
 
 # Load model and tokenizer
 model = load_model('next_word_predictor.h5')
 with open('tokenizer.pkl', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
-# Multi-word generation function
+# Helper: Clean input (keep letters and spaces)
+def clean_input(text):
+    cleaned = re.sub(r'[^a-zA-Z\s]', '', text)
+    return cleaned.lower().strip()
+
+# Multi-word generation logic
 def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words=5):
-    seed_text = seed_text.strip()
-    if not seed_text:
-        return "⚠️ Please enter valid text to predict."
+    cleaned_text = clean_input(seed_text)
+    if not cleaned_text:
+        return None, "⚠️ Please enter valid alphabetic text."
 
     for _ in range(num_words):
-        token_list = tokenizer.texts_to_sequences([seed_text])[0]
+        token_list = tokenizer.texts_to_sequences([cleaned_text])[0]
         if not token_list:
-            return "⚠️ Not enough context to predict. Try a longer or different input."
+            return cleaned_text, "⚠️ Not enough context to predict. Try more meaningful text."
 
         token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
         predicted = model.predict(token_list, verbose=0)
@@ -34,17 +40,17 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
                 break
 
         if next_word:
-            seed_text += ' ' + next_word
+            cleaned_text += ' ' + next_word
         else:
-            seed_text += ' ...[unknown]'
+            cleaned_text += ' ...[unknown]'
             break
 
-    return   f"📝 *Shakespeare-style continuation:* \n\n👉 **{seed_text}**"
+    return  return f"📝 *Shakespeare-style continuation:* \n\n👉 **{cleaned_text}**", None
 
-# Streamlit Page Config
+# Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
 
-# Glassmorphic Style
+# Stylish CSS
 st.markdown("""
     <style>
     body {
@@ -93,23 +99,31 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# App Wrapper
+# Main container
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<div class="title">🧠 Next Word Predictor</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Speak like Shakespeare • Powered by AI • Built using NLP + LSTM</div>', unsafe_allow_html=True)
 
-# Input Field
+# Input field
 input_text = st.text_input("✍️ Enter a line (from Hamlet or your own):", placeholder="e.g., To be or not to")
 
-# Word count slider
+# Word count selector
 num_words = st.slider("🔢 Number of words to generate", min_value=1, max_value=20, value=5)
 
-# Predict Button
+# Predict button
 if st.button("🔮 Predict the Next Words"):
     max_sequence_len = model.input_shape[1] + 1
-    prediction = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words=num_words)
-    st.markdown(f'<div class="pred-box">👉 {prediction}</div>', unsafe_allow_html=True)
+    result, error = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words)
 
+    if error:
+        st.warning(error)
+    else:
+        cleaned = clean_input(input_text)
+        if cleaned != input_text.strip().lower():
+            st.markdown(f"<small style='color: #bbb;'>Cleaned input used: <code>{cleaned}</code></small>", unsafe_allow_html=True)
+        st.markdown(f'<div class="pred-box">👉 {result}</div>', unsafe_allow_html=True)
+
+# Close UI
 st.markdown("</div>", unsafe_allow_html=True)
 
 # Footer
@@ -118,4 +132,4 @@ st.markdown("""
 <div style='text-align: center; color: #ccc; font-size: 0.9rem'>
 Made with 💜 by Saksham Sharma • Inspired by Hamlet • #AI #Shakespeare #Streamlit
 </div>
-""", unsafe_allow_html=True)    
+""", unsafe_allow_html=True)
