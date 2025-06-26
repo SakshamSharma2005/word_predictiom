@@ -18,8 +18,6 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
     if not seed_text:
         return "⚠️ Please enter valid text to predict."
 
-    original_seed = seed_text
-
     for _ in range(num_words):
         token_list = tokenizer.texts_to_sequences([seed_text])[0]
         if not token_list:
@@ -46,13 +44,32 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
 # Streamlit Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
 
-# Enhanced UI Style
+# Enhanced Glassmorphic UI Style + Top Box Fix
 st.markdown("""
     <style>
+    html, body, [data-testid="stAppViewContainer"] {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: transparent !important;
+        overflow-x: hidden;
+    }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    header, footer {
+        visibility: hidden;
+        height: 0;
+    }
+
     body {
         background-image: linear-gradient(to right, #1f1c2c, #928dab);
         background-attachment: fixed;
     }
+
     .main {
         background: rgba(255, 255, 255, 0.07);
         padding: 2rem;
@@ -63,6 +80,7 @@ st.markdown("""
         color: white;
         border: 1px solid rgba(255, 255, 255, 0.18);
     }
+
     .title {
         font-size: 2.8rem;
         font-weight: 700;
@@ -70,6 +88,7 @@ st.markdown("""
         color: #ffffff;
         animation: pulse 2s infinite;
     }
+
     .subtitle {
         font-size: 1.2rem;
         text-align: center;
@@ -77,6 +96,7 @@ st.markdown("""
         margin-bottom: 30px;
         font-style: italic;
     }
+
     .pred-box {
         background: linear-gradient(145deg, #5e60ce, #3a0ca3);
         padding: 1.5rem;
@@ -88,6 +108,7 @@ st.markdown("""
         margin-top: 2rem;
         box-shadow: 0 0 10px #5e60ce;
     }
+
     @keyframes pulse {
         0% {
             text-shadow: 0 0 10px #fff, 0 0 20px #7b2cbf;
@@ -99,7 +120,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# App Wrapper
+# App Content
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<div class="title">🧠 Next Word Predictor</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Speak like Shakespeare • Powered by AI • Built using NLP + LSTM</div>', unsafe_allow_html=True)
