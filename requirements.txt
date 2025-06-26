@@ -7,3 +7,6 @@ matplotlib
 seaborn
 scikeras
 nltk
+streamlit streamlit_webrtc speechrecognition pyaudio
+pipwin
+pyaudio
