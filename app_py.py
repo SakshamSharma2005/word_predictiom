@@ -24,7 +24,7 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
     if not cleaned_text:
         return None, "⚠️ Please enter valid alphabetic text."
 
-    for _ in range(num_words):
+        for _ in range(num_words):
         token_list = tokenizer.texts_to_sequences([cleaned_text])[0]
         if not token_list:
             return cleaned_text, "⚠️ Not enough context to predict. Try more meaningful text."
@@ -45,7 +45,8 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
             cleaned_text += ' ...[unknown]'
             break
 
-  return f"📝 *Shakespeare-style continuation:* \n\n👉 **{cleaned_text}**", None
+    return f"📝 *Shakespeare-style continuation:* \n\n👉 **{cleaned_text}**", None
+
 
 # Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
