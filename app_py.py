@@ -8,7 +8,7 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 import pickle
 
 # Load the LSTM Model
-model = load_model('next_word_lstm.h5')
+model = load_model('next_word_predictor.h5')
 
 # Load the tokenizer
 with open('tokenizer.pickle', 'rb') as handle:
