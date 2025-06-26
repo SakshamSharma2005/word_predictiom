@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""APP.py"""
+"""app.py"""
 
 import streamlit as st
 import numpy as np
@@ -12,22 +12,39 @@ model = load_model('next_word_predictor.h5')
 with open('tokenizer.pkl', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
-# Prediction function
-def predict_next_word(seed_text, model, tokenizer, max_sequence_len):
-    token_list = tokenizer.texts_to_sequences([seed_text])[0]
-    token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
-    predicted = model.predict(token_list, verbose=0)
-    predicted_word_index = np.argmax(predicted, axis=-1)[0]
+# Multi-word generation function
+def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words=5):
+    seed_text = seed_text.strip()
+    if not seed_text:
+        return "⚠️ Please enter valid text to predict."
 
-    for word, index in tokenizer.word_index.items():
-        if index == predicted_word_index:
-            return seed_text + ' ' + word
-    return seed_text + ' ...[unknown]'
+    for _ in range(num_words):
+        token_list = tokenizer.texts_to_sequences([seed_text])[0]
+        if not token_list:
+            return "⚠️ Not enough context to predict. Try a longer or different input."
 
-# Page config
+        token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
+        predicted = model.predict(token_list, verbose=0)
+        predicted_word_index = np.argmax(predicted, axis=-1)[0]
+
+        next_word = None
+        for word, index in tokenizer.word_index.items():
+            if index == predicted_word_index:
+                next_word = word
+                break
+
+        if next_word:
+            seed_text += ' ' + next_word
+        else:
+            seed_text += ' ...[unknown]'
+            break
+
+    return seed_text
+
+# Streamlit Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
 
-# Background + Glass effect
+# Glassmorphic Style
 st.markdown("""
     <style>
     body {
@@ -76,22 +93,22 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Main content
+# App Wrapper
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<div class="title">🧠 Next Word Predictor</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">Speak like Shakespeare • Powered by AI • Built using NLP + GRU</div>', unsafe_allow_html=True)
+st.markdown('<div class="subtitle">Speak like Shakespeare • Powered by AI • Built using NLP + LSTM</div>', unsafe_allow_html=True)
 
-# Input UI
+# Input Field
 input_text = st.text_input("✍️ Enter a line (from Hamlet or your own):", placeholder="e.g., To be or not to")
 
-# Predict button
-if st.button("🔮 Predict the Next Word"):
-    if not input_text.strip():
-        st.warning("Please enter some text to predict the next word.")
-    else:
-        max_sequence_len = model.input_shape[1] + 1
-        predicted_sentence = predict_next_word(input_text, model, tokenizer, max_sequence_len)
-        st.markdown(f'<div class="pred-box">👉 {predicted_sentence}</div>', unsafe_allow_html=True)
+# Word count slider
+num_words = st.slider("🔢 Number of words to generate", min_value=1, max_value=20, value=5)
+
+# Predict Button
+if st.button("🔮 Predict the Next Words"):
+    max_sequence_len = model.input_shape[1] + 1
+    prediction = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words=num_words)
+    st.markdown(f'<div class="pred-box">👉 {prediction}</div>', unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
