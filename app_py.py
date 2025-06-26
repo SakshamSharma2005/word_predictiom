@@ -11,7 +11,7 @@ import pickle
 model = load_model('next_word_predictor.h5')
 
 # Load the tokenizer
-with open('tokenizer.pickle', 'rb') as handle:
+with open('tokenizer.pkl', 'rb') as handle:
     tokenizer = pickle.load(handle)
 
 # Function to predict the next word
