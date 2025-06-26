@@ -118,4 +118,4 @@ st.markdown("""
 <div style='text-align: center; color: #ccc; font-size: 0.9rem'>
 Made with 💜 by Saksham Sharma • Inspired by Hamlet • #AI #Shakespeare #Streamlit
 </div>
-""", unsafe_allow_html=True)     add a line while giving output this is an shekspear styled output or something like it and can me make ui more good
+""", unsafe_allow_html=True)    
