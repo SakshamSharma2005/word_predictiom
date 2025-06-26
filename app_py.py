@@ -39,88 +39,61 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
             seed_text += ' ...[unknown]'
             break
 
-    return f"📝 *Shakespeare-style continuation:* \n\n👉 **{seed_text}**"
+    return seed_text
 
 # Streamlit Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
 
-# Enhanced Glassmorphic UI Style + Top Box Fix
+# Glassmorphic Style
 st.markdown("""
     <style>
-    html, body, [data-testid="stAppViewContainer"] {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        background-color: transparent !important;
-        overflow-x: hidden;
-    }
-
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-
-    header, footer {
-        visibility: hidden;
-        height: 0;
-    }
-
     body {
-        background-image: linear-gradient(to right, #1f1c2c, #928dab);
+        background-image: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         background-attachment: fixed;
     }
-
     .main {
-        background: rgba(255, 255, 255, 0.07);
+        background: rgba(255, 255, 255, 0.05);
         padding: 2rem;
-        border-radius: 20px;
-        backdrop-filter: blur(18px);
-        -webkit-backdrop-filter: blur(18px);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border-radius: 15px;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         color: white;
-        border: 1px solid rgba(255, 255, 255, 0.18);
     }
-
     .title {
-        font-size: 2.8rem;
-        font-weight: 700;
+        font-size: 2.5rem;
         text-align: center;
         color: #ffffff;
-        animation: pulse 2s infinite;
+        animation: glow 2s ease-in-out infinite alternate;
     }
-
     .subtitle {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
         text-align: center;
-        color: #dddddd;
+        color: #cccccc;
         margin-bottom: 30px;
-        font-style: italic;
     }
-
+    @keyframes glow {
+        from {
+            text-shadow: 0 0 10px #fff, 0 0 20px #9d4edd, 0 0 30px #7b2cbf;
+        }
+        to {
+            text-shadow: 0 0 20px #fff, 0 0 30px #7b2cbf, 0 0 40px #5a189a;
+        }
+    }
     .pred-box {
-        background: linear-gradient(145deg, #5e60ce, #3a0ca3);
-        padding: 1.5rem;
-        border-radius: 15px;
+        background: linear-gradient(135deg, #7b2cbf, #3c096c);
+        padding: 1rem;
+        border-radius: 10px;
         color: #ffffff;
         font-weight: 500;
-        font-size: 1.3rem;
+        font-size: 1.2rem;
         text-align: center;
         margin-top: 2rem;
-        box-shadow: 0 0 10px #5e60ce;
-    }
-
-    @keyframes pulse {
-        0% {
-            text-shadow: 0 0 10px #fff, 0 0 20px #7b2cbf;
-        }
-        100% {
-            text-shadow: 0 0 20px #fff, 0 0 30px #9d4edd;
-        }
     }
     </style>
 """, unsafe_allow_html=True)
 
-# App Content
+# App Wrapper
 st.markdown('<div class="main">', unsafe_allow_html=True)
 st.markdown('<div class="title">🧠 Next Word Predictor</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Speak like Shakespeare • Powered by AI • Built using NLP + LSTM</div>', unsafe_allow_html=True)
@@ -135,7 +108,7 @@ num_words = st.slider("🔢 Number of words to generate", min_value=1, max_value
 if st.button("🔮 Predict the Next Words"):
     max_sequence_len = model.input_shape[1] + 1
     prediction = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words=num_words)
-    st.markdown(f'<div class="pred-box">{prediction}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="pred-box">👉 {prediction}</div>', unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
@@ -145,4 +118,4 @@ st.markdown("""
 <div style='text-align: center; color: #ccc; font-size: 0.9rem'>
 Made with 💜 by Saksham Sharma • Inspired by Hamlet • #AI #Shakespeare #Streamlit
 </div>
-""", unsafe_allow_html=True)
+""", unsafe_allow_html=True)     add a line while giving output this is an shekspear styled output or something like it and can me make ui more good
