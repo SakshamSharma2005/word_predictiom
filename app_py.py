@@ -39,7 +39,7 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
             seed_text += ' ...[unknown]'
             break
 
-    return  return f"📝 *Shakespeare-style continuation:* \n\n👉 **{seed_text}**"
+    return   f"📝 *Shakespeare-style continuation:* \n\n👉 **{seed_text}**"
 
 # Streamlit Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
