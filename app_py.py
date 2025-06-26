@@ -21,8 +21,8 @@ def clean_input(text):
 # Multi-word generation logic
 def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words=5):
     cleaned_text = clean_input(seed_text)
-    if not cleaned_text:
-        return None, "⚠️ Please enter valid alphabetic text."
+    if not cleaned_text or cleaned_text.isspace():
+        return None, "⚠️ Please enter valid alphabetic text only (no symbols, emojis, or numbers)."
 
     for _ in range(num_words):
         token_list = tokenizer.texts_to_sequences([cleaned_text])[0]
@@ -112,17 +112,20 @@ num_words = st.slider("🔢 Number of words to generate", min_value=1, max_value
 
 # Predict button
 if st.button("🔮 Predict the Next Words"):
-    max_sequence_len = model.input_shape[1] + 1
-    result, error = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words)
-
-    if error:
-        st.warning(error)
+    if input_text is None or input_text.strip() == "":
+        st.warning("⚠️ Please enter some text. Only letters and spaces are allowed.")
     else:
-        cleaned = clean_input(input_text)
-        if cleaned != input_text.strip().lower():
-            st.markdown(f"<small style='color: #bbb;'>Cleaned input used: <code>{cleaned}</code></small>", unsafe_allow_html=True)
-        st.markdown(f'<div class="pred-box">👉 {result}</div>', unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #aaa; font-style: italic;'>📝 This is a Shakespearean-style response.</p>", unsafe_allow_html=True)
+        max_sequence_len = model.input_shape[1] + 1
+        result, error = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words)
+
+        if error:
+            st.warning(error)
+        else:
+            cleaned = clean_input(input_text)
+            if cleaned != input_text.strip().lower():
+                st.markdown(f"<small style='color: #bbb;'>Cleaned input used: <code>{cleaned}</code></small>", unsafe_allow_html=True)
+            st.markdown(f'<div class="pred-box">👉 {result}</div>', unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center; color: #aaa; font-style: italic;'>📝 This is a Shakespearean-style response.</p>", unsafe_allow_html=True)
 
 # Close UI
 st.markdown("</div>", unsafe_allow_html=True)
