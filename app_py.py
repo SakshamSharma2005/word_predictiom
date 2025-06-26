@@ -45,7 +45,7 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
             cleaned_text += ' ...[unknown]'
             break
 
-    return  return f"📝 *Shakespeare-style continuation:* \n\n👉 **{cleaned_text}**", None
+  return f"📝 *Shakespeare-style continuation:* \n\n👉 **{cleaned_text}**", None
 
 # Page Config
 st.set_page_config(page_title="🔮 Shakespearean AI - Next Word Predictor", layout="centered")
