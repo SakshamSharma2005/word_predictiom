@@ -1,5 +1,5 @@
 streamlit
-tensorflow==
+tensorflow
 numpy
 pandas
 scikit-learn
