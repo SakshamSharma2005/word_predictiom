@@ -8,10 +8,19 @@ import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Load model and tokenizer
-model = load_model('next_word_predictor.h5')
-with open('tokenizer.pkl', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+# Load model and tokenizer with error handling
+try:
+    model = load_model('next_word_predictor.h5', compile=False)
+except Exception as e:
+    st.error(f"❌ Failed to load model: {e}")
+    st.stop()
+
+try:
+    with open('tokenizer.pkl', 'rb') as handle:
+        tokenizer = pickle.load(handle)
+except Exception as e:
+    st.error(f"❌ Failed to load tokenizer: {e}")
+    st.stop()
 
 # Helper: Clean input (keep letters and spaces)
 def clean_input(text):
@@ -25,9 +34,10 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
         return None, "⚠️ Please enter valid alphabetic text only (no symbols, emojis, or numbers)."
 
     for _ in range(num_words):
-        token_list = tokenizer.texts_to_sequences([cleaned_text])[0]
+        token_list = tokenizer.texts_to_sequences([cleaned_text])[0] if tokenizer.texts_to_sequences([cleaned_text]) else []
+
         if not token_list:
-            return cleaned_text, "⚠️ Not enough context to predict. Try more meaningful text."
+            return cleaned_text, "⚠️ None of the words are recognized. Please enter more common or valid words."
 
         token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
         predicted = model.predict(token_list, verbose=0)
