@@ -7,5 +7,4 @@ matplotlib
 seaborn
 scikeras
 nltk
-pipwin
-pyaudio
+
