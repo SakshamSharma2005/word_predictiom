@@ -42,6 +42,7 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
         if not token_list:
             return cleaned_text, "⚠️ None of the words are recognized. Please enter more common or valid words."
 
+        token_list = token_list[-(max_sequence_len - 1):]  # ✅ Fix for long input
         token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
         predicted = model.predict(token_list, verbose=0)
         predicted_word_index = np.argmax(predicted, axis=-1)[0]
