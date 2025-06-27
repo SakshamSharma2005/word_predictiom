@@ -22,15 +22,15 @@ except Exception as e:
     st.error(f"❌ Failed to load tokenizer: {e}")
     st.stop()
 
-# ✅ FIX: Set max_sequence_len to the value used during training
-max_sequence_len = 20  # Set to your training value
+# ✅ FIX: Set max_sequence_len based on training (adjust if you know the actual value)
+max_sequence_len = 20  # Replace with your actual training max sequence length if needed
 
 # Helper: Clean input (keep letters and spaces)
 def clean_input(text):
     cleaned = re.sub(r'[^a-zA-Z\s]', '', text)
     return cleaned.lower().strip()
 
-# Multi-word generation logic
+# Multi-word generation logic with long input fix
 def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words=5):
     cleaned_text = clean_input(seed_text)
     if not cleaned_text or cleaned_text.isspace():
@@ -41,6 +41,9 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
 
         if not token_list:
             return cleaned_text, "⚠️ None of the words are recognized. Please enter more common or valid words."
+
+        # ✅ FIX: Truncate token list to avoid overflow
+        token_list = token_list[-(max_sequence_len - 1):]
 
         token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
         predicted = model.predict(token_list, verbose=0)
