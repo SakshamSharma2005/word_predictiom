@@ -37,10 +37,11 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
         return None, "⚠️ Please enter valid alphabetic text only (no symbols, emojis, or numbers)."
 
     for _ in range(num_words):
-        token_list = tokenizer.texts_to_sequences([cleaned_text])[0] if tokenizer.texts_to_sequences([cleaned_text]) else []
+        seq = tokenizer.texts_to_sequences([cleaned_text])
+        token_list = seq[0] if seq and seq[0] else []
 
         if not token_list:
-            return cleaned_text, "⚠️ None of the words are recognized. Please enter more common or valid words."
+            return cleaned_text, "⚠️ None of the words are recognized or text is too short. Try entering more meaningful words."
 
         token_list = token_list[-(max_sequence_len - 1):]  # ✅ Fix for long input
         token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
