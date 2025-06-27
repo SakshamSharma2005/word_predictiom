@@ -22,6 +22,9 @@ except Exception as e:
     st.error(f"❌ Failed to load tokenizer: {e}")
     st.stop()
 
+# ✅ FIX: Set max_sequence_len to the value used during training
+max_sequence_len = 20  # Set to your training value
+
 # Helper: Clean input (keep letters and spaces)
 def clean_input(text):
     cleaned = re.sub(r'[^a-zA-Z\s]', '', text)
@@ -39,7 +42,7 @@ def generate_next_words(seed_text, model, tokenizer, max_sequence_len, num_words
         if not token_list:
             return cleaned_text, "⚠️ None of the words are recognized. Please enter more common or valid words."
 
-        token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
+        token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
         predicted = model.predict(token_list, verbose=0)
         predicted_word_index = np.argmax(predicted, axis=-1)[0]
 
@@ -125,7 +128,6 @@ if st.button("🔮 Predict the Next Words"):
     if input_text is None or input_text.strip() == "":
         st.warning("⚠️ Please enter some text. Only letters and spaces are allowed.")
     else:
-        max_sequence_len = model.input_shape[1] + 1
         result, error = generate_next_words(input_text, model, tokenizer, max_sequence_len, num_words)
 
         if error:
